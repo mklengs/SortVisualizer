@@ -30,6 +30,7 @@ private:
     void insertionsort();
     //void mergesort(std::vector<QGraphicsRectItem *>columns,int,int);
     void quicksort(int,int);
+    void cocktailsort();
     int partition(int,int);
 };
 

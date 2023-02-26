@@ -61,6 +61,11 @@
          <string>Quick Sort</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Cocktail Sort</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="1" column="5">

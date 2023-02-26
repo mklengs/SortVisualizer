@@ -20,6 +20,7 @@ void WorkerThread::doAlgo(int sortSelect,std::vector<QGraphicsRectItem *> c,int 
     case 2:insertionsort();break;
     //case 3:mergesort(columns,0,columns.size() - 1);break;
     case 3:quicksort(0,columns.size() - 1);break;
+    case 4:cocktailsort();break;
     default:break;
     }
     emit done();
@@ -229,4 +230,58 @@ int WorkerThread::partition(int low,int high){
     emit inc_swaps();
 
     return pIndex;
+}
+
+void WorkerThread::cocktailsort(){
+    bool sorted = false;
+    int iterations = 0;
+    while(!sorted){
+        sorted = true;
+        //Bubble sort up
+        for(int i = iterations + 1;i<columns.size()-iterations;i++){
+            if(QThread::currentThread()->isInterruptionRequested()){
+                QThread::currentThread()->quit();
+                return;
+            }
+            emit inc_comparisons();
+            if(columns[i]->rect().height() < columns[i-1]->rect().height()){
+                sorted = false;
+                emit swap(i,i-1);
+                emit inc_swaps();
+
+                auto temp = columns[i];
+                columns[i] = columns[i-1];
+                columns[i-1] = temp;
+            }
+            emit highlight(i,Qt::red);
+            if(i-1 != iterations)emit highlight(i-1,::Qt::cyan);
+            if(i == columns.size() - 1 - iterations)emit highlight(i,Qt::green);
+            Sleep(delay);
+        }
+        //Bubble sort down
+        for(int i = columns.size() - iterations - 2;i>iterations;i--){
+            if(QThread::currentThread()->isInterruptionRequested()){
+                QThread::currentThread()->quit();
+                return;
+            }
+            emit inc_comparisons();
+            if(columns[i]->rect().height() < columns[i-1]->rect().height()){
+                sorted = false;
+                emit swap(i,i-1);
+                emit inc_swaps();
+
+                auto temp = columns[i];
+                columns[i] = columns[i-1];
+                columns[i-1] = temp;
+            }
+            emit highlight(i-1,Qt::red);
+            emit highlight(i,::Qt::cyan);
+            if(i-1 == iterations)emit highlight(i-1,Qt::green);
+            Sleep(delay);
+        }
+        iterations++;
+    }
+    for(int i = 0;i<columns.size();i++){
+        emit highlight(i,Qt::green);
+    }
 }
